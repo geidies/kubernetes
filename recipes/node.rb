@@ -19,6 +19,5 @@
 include_recipe "::install"
 
 kube_node 'default-worker' do
-  action :create
-  #master_ip '172.31.43.196'
+  master_ip node['kubernetes']['master']['ip']
 end
