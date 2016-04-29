@@ -1,7 +1,6 @@
-#<% require 'kitchen-sync' %>
 ---
-driver_config:
-   digitalocean_access_token: <%= ENV['DIGITALOCEAN_API_TOKEN'] %>
+driver:
+  name: vagrant
 
 provisioner:
   name: chef_zero
@@ -11,17 +10,14 @@ verifier:
   name: inspec
 
 platforms:
-- name: centos-7.0
-  driver_plugin: digitalocean
-  driver_config:
-    size: 2gb
-    image: centos-7-0-x64
-    region: <%= ENV['DIGITALOCEAN_REGION'] %>
-    ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
-  transport:
-    ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
-  run_list:
-  - recipe[yum-docker]
+  - name: centos-7.2
+    run_list:
+      - recipe[yum-docker]
+    attributes:
+      kubernetes:
+        client_version: 0.3.0
+        master:
+          ip: 192.168.33.10
 
 suites:
   # - name: default
@@ -35,23 +31,26 @@ suites:
   #     - recipe[k8s::docker_install]
   #   attributes:
   - name: decker-master
+    driver:
+      network:
+        - ["private_network", {ip: "192.168.33.10"}]
     run_list:
       - recipe[kubernetes::master]
-    attributes:
-      kubernetes:
-        client_version: '0.3.0'
+
   - name: decker-worker
+    driver:
+      network:
+        - ["private_network", {ip: "192.168.33.11"}]
     run_list:
-      - recipe[kubernetes::node]
-    attributes:
-      kubernetes:
-        client_version: '0.3.0'
+      - recipe[kubernetes_test::worker]
+
   - name: decker-worker-2
+    driver:
+      network:
+        - ["private_network", {ip: "192.168.33.12"}]
     run_list:
-      - recipe[kubernetes::node]
-    attributes:
-      kubernetes:
-        client_version: '0.3.0'
+      - recipe[kubernetes_test::worker2]
+
 #  - name: node-1
 #    run_list:
 #      - recipe[k8s::default]

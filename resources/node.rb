@@ -22,3 +22,4 @@ default_action :create
 provides :kube_node
 
 attribute :master_ip, kind_of: String, required: true
+attribute :ip, kind_of: String, default: node['ipaddress']
