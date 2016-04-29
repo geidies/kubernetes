@@ -18,23 +18,25 @@
 
 require 'spec_helper'
 
-describe 'k8s::node' do
-
+describe 'kubernetes::node' do
   context 'starts and enables the kubernetes node services' do
+    cached(:chef_run) do
+      ChefSpec::ServerRunner.new(step_into: ['kube_node'])
+                            .converge(described_recipe)
+    end
 
-    let(:chef_run) do
-      ChefSpec::ServerRunner.new.converge(described_recipe)
+    before do
+      stub_command('brctl show | grep -q docker0').and_return true
     end
 
     it 'starts and enables the proxy' do
-      expect(chef_run).to start_service('kube-proxy')
-      expect(chef_run).to enable_service('kube-proxy')
+      expect(chef_run).to pull_docker_image('hyperkube')
+      expect(chef_run).to run_docker_container('proxy')
     end
 
     it 'starts and enables the kubelet' do
-      expect(chef_run).to start_service('kubelet')
-      expect(chef_run).to enable_service('kubelet')
+      expect(chef_run).to pull_docker_image('hyperkube')
+      expect(chef_run).to run_docker_container('kubelet')
     end
-
   end
 end

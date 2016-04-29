@@ -87,7 +87,7 @@ action :create do
   docker_service 'kubernetes' do
     bip lazy { node.run_state[:flannel][:bip] }
     mtu lazy { node.run_state[:flannel][:mtu] }
-    action [:create,:start]
+    action [:create, :start]
     notifies :run, 'docker_container[etcd]', :immediately
     notifies :run, 'docker_container[flannel]', :immediately
   end

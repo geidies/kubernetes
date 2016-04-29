@@ -18,37 +18,30 @@
 
 require 'spec_helper'
 
-describe 'k8s::master' do
-
+describe 'kubernetes::master' do
   context 'starts and enables the kubernetes master services' do
+    cached(:chef_run) do
+      ChefSpec::ServerRunner.new(step_into: ['kube_master'])
+                            .converge(described_recipe)
+    end
 
-    let(:chef_run) do
-      ChefSpec::ServerRunner.new.converge(described_recipe)
+    before do
+      stub_command('brctl show | grep -q docker0').and_return true
     end
 
     it 'starts and enables etcd' do
-      expect(chef_run).to start_service('etcd')
-      expect(chef_run).to enable_service('etcd')
+      expect(chef_run).to pull_docker_image('etcd')
+      expect(chef_run).to run_docker_container('etcd')
     end
 
-    it 'starts and enables the apiserver' do
-      expect(chef_run).to start_service('kube-apiserver')
-      expect(chef_run).to enable_service('kube-apiserver')
+    it 'starts and enables kubernetes' do
+      expect(chef_run).to pull_docker_image('hyperkube')
+      expect(chef_run).to run_docker_container('kubelet')
     end
 
-    it 'starts and enables the controller-manager' do
-      expect(chef_run).to start_service('kube-controller-manager')
-      expect(chef_run).to enable_service('kube-controller-manager')
+    it 'starts and enables the proxy' do
+      expect(chef_run).to pull_docker_image('hyperkube')
+      expect(chef_run).to run_docker_container('proxy')
     end
-
-    it 'starts and enables the scheduler' do
-      expect(chef_run).to start_service('kube-scheduler')
-      expect(chef_run).to enable_service('kube-scheduler')
-    end
-
-    it 'writes apiserver config' do
-      expect(chef_run).to render_file('/etc/kubernetes/apiserver')
-    end
-
   end
 end
