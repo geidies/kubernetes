@@ -16,8 +16,7 @@
 # limitations under the License.
 #
 
-
 actions :create, :destroy
+default_action :create
 
 provides :kube_master
-
