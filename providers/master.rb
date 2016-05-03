@@ -77,7 +77,9 @@ action :create do
     retries 5
   end
 
-  package 'bridge-utils'
+  package 'bridge-utils' do
+    retries 3
+  end
 
   execute 'delete-existing-docker-bridge' do
     command 'ifconfig docker0 down; brctl delbr docker0'
