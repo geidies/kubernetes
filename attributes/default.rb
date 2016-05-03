@@ -19,6 +19,6 @@ default['kubernetes']['client_version'] = '1.1.3'
 default['kubernetes']['master']['ip'] = '127.0.0.1'
 default['kubernetes']['master']['port'] = '8080'
 
-default['kubernetes']['etcd']['version'] = '2.0.9'
+default['kubernetes']['etcd']['version'] = '2.2.5'
 default['kubernetes']['flannel']['version'] = '0.5.0'
 default['kubernetes']['hyperkube']['version'] = 'v0.21.2'
