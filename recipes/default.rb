@@ -14,10 +14,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# include_recipe 'build-essential'
 
-# gem_package 'kubeclient' do 
-#   version node['k8s']['client_version']
-#   action :install
-# end
+include_recipe 'build-essential'
+
+gem_package 'kubeclient' do
+  version node['kubernetes']['client_version']
+end

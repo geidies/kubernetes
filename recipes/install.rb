@@ -16,9 +16,7 @@
 # limitations under the License.
 #
 
-include_recipe '::default'
-
-include_recipe 'selinux::disabled' if node[:platform_family].eql? "rhel"
+include_recipe 'selinux::disabled' if node[:platform_family].eql? 'rhel'
 
 docker_service 'kubernetes' do
   action [:create, :start]

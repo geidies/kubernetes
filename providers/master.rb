@@ -23,14 +23,14 @@ action :create do
   # pull down the etc container
   docker_image 'etcd' do
     repo 'gcr.io/google_containers/etcd'
-    tag '2.0.9'
+    tag node['kubernetes']['etcd']['version']
   end
 
   # deploy etcd container
   docker_container 'etcd' do
     network_mode 'host'
     repo 'gcr.io/google_containers/etcd'
-    tag '2.0.9'
+    tag node['kubernetes']['etcd']['version']
     restart_policy 'always'
     command '/usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data'
     action :run
@@ -40,7 +40,7 @@ action :create do
   docker_container 'create-etcd-cidr-range' do
     network_mode 'host'
     repo 'gcr.io/google_containers/etcd'
-    tag '2.0.9'
+    tag node['kubernetes']['etcd']['version']
     command %q(etcdctl set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }')
     action :run
     only_if {
@@ -51,13 +51,13 @@ action :create do
   # pull down flanneld container
   docker_image 'flannel' do
     repo 'quay.io/coreos/flannel'
-    tag '0.5.0'
+    tag node['kubernetes']['flannel']['version']
   end
 
   docker_container 'flannel' do
     network_mode 'host'
     repo 'quay.io/coreos/flannel'
-    tag '0.5.0'
+    tag node['kubernetes']['flannel']['version']
     privileged true
     binds ['/dev/net:/dev/net']
     restart_policy 'always'
@@ -97,13 +97,13 @@ action :create do
   # pull down the kubernetes container
   docker_image 'hyperkube' do
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
   end
 
   docker_container 'kubelet' do
     network_mode 'host'
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
     binds ['/var/run/docker.sock:/var/run/docker.sock']
     command '/hyperkube kubelet --api_servers=http://localhost:8080 --v=2 --address=0.0.0.0 --enable_server --hostname_override=127.0.0.1 --config=/etc/kubernetes/manifests-multi'
     restart_policy 'always'
@@ -113,7 +113,7 @@ action :create do
   docker_container 'proxy' do
     network_mode 'host'
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
     privileged true
     restart_policy 'always'
     command '/hyperkube proxy --master=http://127.0.0.1:8080 --v=2'

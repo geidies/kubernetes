@@ -22,13 +22,13 @@ action :create do
   # pull down flanneld container
   docker_image 'flannel' do
     repo 'quay.io/coreos/flannel'
-    tag '0.5.0'
+    tag node['kubernetes']['flannel']['version']
   end
 
   docker_container 'flannel' do
     network_mode 'host'
     repo 'quay.io/coreos/flannel'
-    tag '0.5.0'
+    tag node['kubernetes']['flannel']['version']
     privileged true
     binds ['/dev/net:/dev/net']
     restart_policy 'always'
@@ -68,13 +68,13 @@ action :create do
   # pull down the kubernetes container
   docker_image 'hyperkube' do
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
   end
 
   docker_container 'kubelet' do
     network_mode 'host'
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
     binds ['/var/run/docker.sock:/var/run/docker.sock']
     command "/hyperkube kubelet --api_servers=http://#{new_resource.master_ip}:8080 --v=2 --address=0.0.0.0 --enable_server --hostname_override=#{new_resource.ip}"
     restart_policy 'always'
@@ -84,7 +84,7 @@ action :create do
   docker_container 'proxy' do
     network_mode 'host'
     repo 'gcr.io/google_containers/hyperkube'
-    tag 'v0.21.2'
+    tag node['kubernetes']['hyperkube']['version']
     privileged true
     restart_policy 'always'
     command "/hyperkube proxy --master=http://#{new_resource.master_ip}:8080 --v=2"

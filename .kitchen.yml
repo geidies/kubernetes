@@ -36,6 +36,7 @@ suites:
         - ["private_network", {ip: "192.168.33.10"}]
     run_list:
       - recipe[kubernetes::master]
+      - recipe[kubernetes::default]
 
   - name: decker-worker
     driver:
