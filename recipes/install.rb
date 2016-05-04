@@ -18,7 +18,9 @@
 
 include_recipe 'selinux::disabled' if node[:platform_family].eql? 'rhel'
 
+# Install docker for the first time, later manage by providers
 docker_service 'kubernetes' do
   action [:create, :start]
   retries 5
+  not_if '[ -e /etc/systemd/system/docker-kubernetes.service ]'
 end
