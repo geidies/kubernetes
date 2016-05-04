@@ -21,4 +21,4 @@ default['kubernetes']['master']['port'] = '8080'
 
 default['kubernetes']['etcd']['version'] = '2.2.5'
 default['kubernetes']['flannel']['version'] = '0.5.5'
-default['kubernetes']['hyperkube']['version'] = 'v0.21.2'
+default['kubernetes']['hyperkube']['version'] = 'v1.2.3'

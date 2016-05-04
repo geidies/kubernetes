@@ -15,7 +15,6 @@ platforms:
       - recipe[yum-docker]
     attributes:
       kubernetes:
-        client_version: 0.3.0
         master:
           ip: 192.168.33.10
 

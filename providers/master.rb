@@ -104,6 +104,7 @@ action :create do
     network_mode 'host'
     repo 'gcr.io/google_containers/hyperkube'
     tag node['kubernetes']['hyperkube']['version']
+    privileged true
     binds ['/var/run/docker.sock:/var/run/docker.sock']
     command '/hyperkube kubelet --api_servers=http://localhost:8080 --v=2 --address=0.0.0.0 --enable_server --hostname_override=127.0.0.1 --config=/etc/kubernetes/manifests-multi'
     restart_policy 'always'
