@@ -43,9 +43,9 @@ action :create do
     tag node['kubernetes']['etcd']['version']
     command %q(etcdctl set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }')
     action :run
-    only_if {
-      sleep 5 # horrible hack to wait for etcd to be available
-    }
+    not_if "docker run --net=host gcr.io/google_containers/etcd:#{node['kubernetes']['etcd']['version']} etcdctl get /coreos.com/network/config | grep '{ \"Network\": \"10.1.0.0/16\" }'"
+    retries 5
+    retry_delay 2
   end
 
   # pull down flanneld container
