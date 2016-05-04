@@ -43,8 +43,8 @@ action :create do
       env = %x(docker exec #{flannel_id} cat /run/flannel/subnet.env)
       raise "Unable to gather flannel networking information!" if env.empty?
       env = env.split
-      node.run_state[:flannel][:bip] = env[0].split('=')[1].strip
-      node.run_state[:flannel][:mtu] = env[1].split('=')[1].strip
+      node.run_state[:flannel][:bip] = env.grep(/^FLANNEL_SUBNET=/).first.split('=').last.strip
+      node.run_state[:flannel][:mtu] = env.grep(/^FLANNEL_MTU=/).first.split('=').last.strip
     end
     retries 5
   end
